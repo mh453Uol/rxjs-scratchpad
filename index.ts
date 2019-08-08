@@ -2,6 +2,7 @@ import {allBooks, allReaders} from './data';
 import {Observable, of, from, concat, fromEvent, Subscription} from 'rxjs';
 import {map, mergeMap, take, takeUntil, filter, tap, catchError} from 'rxjs/operators';
 import {ajax} from 'rxjs/ajax';
+import {Pomodoro} from './pomodoro';
 
 //#region CreatingObservables
 ///////////////////// Creating Observables 
@@ -222,14 +223,29 @@ timer2$
 const stopTimerEl2 = document.getElementById('timerStopButton');
 const stopTimer = fromEvent(stopTimerEl2, 'click');
 
-timer2$
-    .pipe(
-        takeUntil(stopTimer) //run for 6 seconds and call complete
-    )
-    .subscribe(
-        number => console.log(`takeUntil: ${number}`),
-        null,
-        () => console.log('Completed')
-    )
+// timer2$
+//     .pipe(
+//         takeUntil(stopTimer) //run for 6 seconds and call complete
+//     )
+//     .subscribe(
+//         number => console.log(`takeUntil: ${number}`),
+//         null,
+//         () => console.log('Completed')
+//     )
 
 //#endregion
+
+///////////////////// Own operators
+
+let randomNumbers$ = of(1,2,3,4,5,6,7,8);
+
+function doublerOperator() {
+    return map(value => value * 2);
+}
+
+console.log('----------------------');
+randomNumbers$.pipe(
+    doublerOperator()
+).subscribe(
+    d => console.log(d)
+)

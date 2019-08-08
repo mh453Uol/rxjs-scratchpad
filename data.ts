@@ -1,3 +1,5 @@
+import {StopWatch} from "./stopwatch";
+
 export const allReaders = [
     { readerID: 1, name: 'Marie', weeklyReadingGoal: 400, totalMinutesRead: 5600 },
     { readerID: 2, name: 'Daniel', weeklyReadingGoal: 210, totalMinutesRead: 3000 },
@@ -12,3 +14,5 @@ export const allBooks = [
     { bookID: 5, title: 'Curious George', author: 'H. A. Rey', publicationYear: 1941 },
     { bookID: 6, title: 'Alice\'s Adventures in Wonderland', author: 'Lewis Carroll', publicationYear: 1865 },
 ];
+
+const j = new StopWatch();
