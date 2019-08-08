@@ -1,6 +1,6 @@
 import {allBooks, allReaders} from './data';
 import {Observable, of, from, concat, fromEvent, Subscription} from 'rxjs';
-import {map, mergeMap, filter, tap, catchError} from 'rxjs/operators';
+import {map, mergeMap, take, takeUntil, filter, tap, catchError} from 'rxjs/operators';
 import {ajax} from 'rxjs/ajax';
 
 //#region CreatingObservables
@@ -191,12 +191,45 @@ ajax('/api/books')
         filter(book => book.publicationYear < 1950),
         tap(oldBook => console.log(`Title: ${oldBook.title}`))
         catchError(
-            err => of({title: 'Failure' })
+            err => of({title: 'Failure'})
         )
     )
     .subscribe(
         response => console.log(response),
         err => console.log(`ERROR: ${err}`)
+    )
+
+
+let timer2$ = new Observable<number>(subscriber => {
+    let secondsPassed = 0;
+
+    setInterval(() => {
+        secondsPassed++;
+        subscriber.next(secondsPassed);
+    }, 1000);
+})
+
+timer2$
+    .pipe(
+        take((60 * 0.1)) //run for 6 seconds and call complete
+    )
+    .subscribe(
+        number => console.log(number),
+        null,
+        () => console.log('Completed')
+    )
+
+const stopTimerEl2 = document.getElementById('timerStopButton');
+const stopTimer = fromEvent(stopTimerEl2, 'click');
+
+timer2$
+    .pipe(
+        takeUntil(stopTimer) //run for 6 seconds and call complete
+    )
+    .subscribe(
+        number => console.log(`takeUntil: ${number}`),
+        null,
+        () => console.log('Completed')
     )
 
 //#endregion
