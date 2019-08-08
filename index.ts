@@ -2,6 +2,7 @@ import {allBooks, allReaders} from './data';
 import {Observable, of, from, concat, fromEvent, Subscription} from 'rxjs';
 import {map, mergeMap, take, takeUntil, filter, tap, catchError} from 'rxjs/operators';
 import {ajax} from 'rxjs/ajax';
+import {Pomodoro} from './pomodoro';
 
 //#region CreatingObservables
 ///////////////////// Creating Observables 
@@ -222,14 +223,15 @@ timer2$
 const stopTimerEl2 = document.getElementById('timerStopButton');
 const stopTimer = fromEvent(stopTimerEl2, 'click');
 
-timer2$
-    .pipe(
-        takeUntil(stopTimer) //run for 6 seconds and call complete
-    )
-    .subscribe(
-        number => console.log(`takeUntil: ${number}`),
-        null,
-        () => console.log('Completed')
-    )
+// timer2$
+//     .pipe(
+//         takeUntil(stopTimer) //run for 6 seconds and call complete
+//     )
+//     .subscribe(
+//         number => console.log(`takeUntil: ${number}`),
+//         null,
+//         () => console.log('Completed')
+//     )
 
+new Pomodoro();
 //#endregion
