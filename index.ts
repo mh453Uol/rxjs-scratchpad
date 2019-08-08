@@ -1,6 +1,6 @@
 import { allBooks, allReaders } from './data';
 import { Observable, of, from, concat, fromEvent } from 'rxjs';
-
+import { ajax } from 'rxjs/ajax';
 ///////////////////// Creating Observables 
 
 // What will happen when the observable
@@ -54,8 +54,40 @@ let source2$ = from(allBooks);
 // );
 
 let source3$ = concat(source1$, source2$);
-source3$.subscribe(data => console.log(data));
+// source3$.subscribe(data => console.log(data));
 
+
+let button = document.getElementById('readersButton');
+
+// fromEvent(button, 'click')
+//     .subscribe(event => {
+//         console.log(event);
+
+//         let readers = allReaders;
+
+//         const readerEl = document.getElementById('readers-list');
+//         readers.forEach(r => {
+//             readerEl.innerHTML += `${r.name} <br>`;
+//         })
+//     });
+
+fromEvent(button, 'click')
+    .subscribe(event => {
+        ajax('/api/readers')
+            .subscribe(
+                response => {
+                    console.log(response);
+                    if (response.response) {
+                        const data = response.response as { readerID: string, name: string, weeklyReadingGoals: number, totalMinutesRead: number }[];
+
+                        const readerEl = document.getElementById('readers-list');
+                        data.forEach(r => {
+                            readerEl.innerHTML += `${r.name} <br>`;
+                        })
+                    }
+                }
+            )
+    });
 
 
 
