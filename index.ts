@@ -1,6 +1,8 @@
-import { allBooks, allReaders } from './data';
-import { Observable, of, from, concat, fromEvent } from 'rxjs';
-import { ajax } from 'rxjs/ajax';
+import {allBooks, allReaders} from './data';
+import {Observable, of, from, concat, fromEvent, Subscription} from 'rxjs';
+import {ajax} from 'rxjs/ajax';
+
+//#region CreatingObservables
 ///////////////////// Creating Observables 
 
 // What will happen when the observable
@@ -78,7 +80,7 @@ fromEvent(button, 'click')
                 response => {
                     console.log(response);
                     if (response.response) {
-                        const data = response.response as { readerID: string, name: string, weeklyReadingGoals: number, totalMinutesRead: number }[];
+                        const data = response.response as {readerID: string, name: string, weeklyReadingGoals: number, totalMinutesRead: number}[];
 
                         const readerEl = document.getElementById('readers-list');
                         data.forEach(r => {
@@ -88,7 +90,82 @@ fromEvent(button, 'click')
                 }
             )
     });
+//#endregion
+
+//#region Subscring to Observable
+
+///////////////////// Subscribing to Observables
+let books$ = from(allBooks);
+
+// books$.subscribe(
+//     book => console.log(`Title:  ${book.title}`),
+//     err => console.log(`ERROR: ${err}`),
+//     () => console.log('Complete')
+// );
+
+let currentTime$ = new Observable(subscriber => {
+    const time = new Date().toLocaleTimeString();
+    subscriber.next(time);
+    subscriber.complete();
+})
+
+currentTime$.subscribe(
+    time => console.log(`Time: (-1) ${time}`),
+    null,
+    () => console.log('---------------')
+);
+// Each observer triggers execution of the subscription
+setTimeout(() => {
+    currentTime$.subscribe(
+        time => console.log(`Time: (1) ${time}`),
+        null,
+        () => console.log('---------------')
+    );
+}, 2000);
+
+currentTime$.subscribe(
+    time => console.log(`Time: (2) ${time}`),
+    null,
+    () => console.log('---------------')
+);
 
 
+const startTimerEl = document.getElementById('timerStartButton');
+const stopTimerEl = document.getElementById('timerStopButton');
+
+let stopWatch$: Subscription;
+
+function timer(subscriber) {
+    let second = 0;
+    const intervalId = setInterval(() => {
+        second++;
+        subscriber.next(second);
+    }, 1000);
+
+    return () => {
+        alert('Tear down');
+        clearInterval(intervalId);
+    }
+}
+
+
+fromEvent(startTimerEl, 'click').subscribe(
+    v => {
+        stopWatch$ = Observable.create(timer).subscribe(
+            time => console.log(time),
+            null,
+            // when unsubscribing complete doesnt get called
+            () => alert(`Timer stoppped`)
+        );
+    }
+);
+
+fromEvent(stopTimerEl, 'click').subscribe(
+    v => {
+        stopWatch$.unsubscribe();
+    }
+);
+
+//#endregion
 
 
