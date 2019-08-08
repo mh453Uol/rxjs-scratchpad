@@ -233,5 +233,19 @@ const stopTimer = fromEvent(stopTimerEl2, 'click');
 //         () => console.log('Completed')
 //     )
 
-new Pomodoro();
 //#endregion
+
+///////////////////// Own operators
+
+let randomNumbers$ = of(1,2,3,4,5,6,7,8);
+
+function doublerOperator() {
+    return map(value => value * 2);
+}
+
+console.log('----------------------');
+randomNumbers$.pipe(
+    doublerOperator()
+).subscribe(
+    d => console.log(d)
+)
