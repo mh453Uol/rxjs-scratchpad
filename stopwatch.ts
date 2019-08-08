@@ -1,6 +1,6 @@
 import {Observable} from "rxjs";
 
-class Duration {
+export class Duration {
     startTime: Date;
     endTime: Date;
     durationInSeconds: number;
