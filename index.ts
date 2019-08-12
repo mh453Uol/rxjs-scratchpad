@@ -1,6 +1,6 @@
 import {allBooks, allReaders} from './data';
-import {Observable, of, from, concat, fromEvent, Subscription} from 'rxjs';
-import {map, mergeMap, take, takeUntil, filter, tap, catchError} from 'rxjs/operators';
+import {Observable, of, from, concat, fromEvent, Subscription, interval} from 'rxjs';
+import {map, mergeMap, take, takeUntil, filter, tap, catchError, publishLast, publishBehavior, publishReplay, publish, refCount} from 'rxjs/operators';
 import {ajax} from 'rxjs/ajax';
 import {Pomodoro} from './pomodoro';
 
@@ -249,3 +249,26 @@ randomNumbers$.pipe(
 ).subscribe(
     d => console.log(d)
 )
+
+let source4$ = interval(1000).pipe(
+    take(4),
+    //publishLast(), // only publish last value (3)
+    publishReplay(), // replay all emitted values 
+    refCount()
+);
+
+source4$.subscribe(
+    value => console.log(`Observer 1: ${value}`)
+);
+
+setTimeout(() => {
+    source4$.subscribe(
+        value => console.log(`Observer 2: ${value}`)
+    )
+}, 2000);
+
+setTimeout(() => {
+    source4$.subscribe(
+        value => console.log(`Observer 3: ${value}`)
+    )
+}, 4000);
